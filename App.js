@@ -1,22 +1,26 @@
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {Amplify} from 'aws-amplify';
 import React, {useState} from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {Amplify} from 'aws-amplify';
+
 import awsconfig from './src/aws-exports';
 
 import HomeScreen from './src/screens/HomeScreen';
 import MessageScreen from './src/screens/MessageScreen';
+import {withAuthenticator} from 'aws-amplify-react-native';
+import ProfileScreen from './src/screens/ProfileScreen';
+import Colors from './src/assets/colors/Colors';
 
 Amplify.configure(awsconfig);
 
 function App(props) {
   const [activeScreen, setActiveScreen] = useState('HOME');
-  const color = '#b5b5b5';
-  const activeColor = '#F76C6B';
+  const color = Colors.LIGHT_GRAY;
+  const activeColor = Colors.BRAND;
   return (
     <GestureHandlerRootView style={styles.root}>
       <View style={styles.pageContainer}>
@@ -42,10 +46,16 @@ function App(props) {
             />
           </Pressable>
 
-          <FontAwesome name="user" size={30} color={color} />
+          <FontAwesome
+            name="user"
+            size={30}
+            onPress={() => setActiveScreen('PROFILE')}
+            color={activeScreen === 'PROFILE' ? activeColor : color}
+          />
         </View>
         {activeScreen === 'HOME' && <HomeScreen />}
         {activeScreen === 'CHAT' && <MessageScreen />}
+        {activeScreen === 'PROFILE' && <ProfileScreen />}
       </View>
     </GestureHandlerRootView>
   );
@@ -68,4 +78,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export default withAuthenticator(App);

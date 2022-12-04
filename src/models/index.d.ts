@@ -24,6 +24,9 @@ type EagerMatch = {
   readonly id: string;
   readonly user1?: User | null;
   readonly User2?: User | null;
+  readonly user1ID: string;
+  readonly user2ID?: string | null;
+  readonly isMatch: boolean;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
   readonly matchUser1Id?: string | null;
@@ -34,6 +37,9 @@ type LazyMatch = {
   readonly id: string;
   readonly user1: AsyncItem<User | undefined>;
   readonly User2: AsyncItem<User | undefined>;
+  readonly user1ID: string;
+  readonly user2ID?: string | null;
+  readonly isMatch: boolean;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
   readonly matchUser1Id?: string | null;
@@ -53,6 +59,7 @@ type EagerUser = {
   readonly bio: string;
   readonly lookingFor?: Genders | keyof typeof Genders | null;
   readonly gender: Genders | keyof typeof Genders;
+  readonly sub: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -64,6 +71,7 @@ type LazyUser = {
   readonly bio: string;
   readonly lookingFor?: Genders | keyof typeof Genders | null;
   readonly gender: Genders | keyof typeof Genders;
+  readonly sub: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

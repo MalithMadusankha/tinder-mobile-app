@@ -3,7 +3,7 @@ import {
   PanGestureHandler,
 } from 'react-native-gesture-handler';
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, useWindowDimensions} from 'react-native';
+import {StyleSheet, View, useWindowDimensions, Text} from 'react-native';
 
 import Animated, {
   interpolate,
@@ -21,7 +21,7 @@ const ROTATION = 60;
 const SWIPE_WELOCITY = 600;
 
 function AnimatedStack(props) {
-  const {data, renderItem, onSwipLeft, onSwipRight} = props;
+  const {data, renderItem, onSwipLeft, onSwipRight, setCurrentUser} = props;
   const [currentIndex, setCurrentIndex] = useState(0);
   const currentProfile = data[currentIndex];
 
@@ -91,7 +91,7 @@ function AnimatedStack(props) {
       );
 
       const onSwip = event.velocityX > 0 ? onSwipRight : onSwipLeft;
-      onSwip && runOnJS(onSwip)(currentProfile);
+      onSwip && runOnJS(onSwip)();
     },
   });
 
@@ -99,6 +99,10 @@ function AnimatedStack(props) {
     translateX.value = 0;
     setNexttIndex(currentIndex + 1);
   }, [currentIndex, translateX]);
+
+  useEffect(() => {
+    setCurrentUser(currentProfile);
+  }, [currentProfile, setCurrentUser]); // eslint-disable-line
 
   return (
     <GestureHandlerRootView style={styles.pageContainer}>
@@ -109,7 +113,7 @@ function AnimatedStack(props) {
           </Animated.View>
         </View>
       )}
-      {currentProfile && (
+      {currentProfile ? (
         <PanGestureHandler onGestureEvent={gesterHandler}>
           <Animated.View style={[styles.animatedCard, cardStyle]}>
             <View style={styles.pageContainer}>
@@ -127,6 +131,10 @@ function AnimatedStack(props) {
             </View>
           </Animated.View>
         </PanGestureHandler>
+      ) : (
+        <View>
+          <Text>Oopps, No more users </Text>
+        </View>
       )}
     </GestureHandlerRootView>
   );

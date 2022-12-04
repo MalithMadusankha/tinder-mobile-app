@@ -1,24 +1,78 @@
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet, View} from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {Auth, DataStore} from 'aws-amplify';
+import {User, Match} from '../models/';
 
 import TinderCard from '../componets/tinderCard';
-import Users from '../assets/data/users.js';
 
 import AnimatedStack from '../componets/animatedStack';
 
 function HomeScreen(props) {
-  const onSwipLeft = user => console.log('swip left', user.name);
-  const onSwipRight = user => console.log('swip right', user.name);
+  const [dbUsers, setDbUsers] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [me, setMe] = useState(null);
+
+  const onSwipLeft = () => {
+    if (!currentUser || !me) {
+      return;
+    }
+    console.warn('swip left', currentUser.name);
+  };
+  const onSwipRight = () => {
+    if (!currentUser || !me) {
+      return;
+    }
+    console.warn('swip right', currentUser.name);
+    DataStore.save(
+      new Match({
+        user1ID: me.id,
+        user2ID: currentUser.id,
+        isMatch: false,
+        user1: new User(me),
+        User2: new User(currentUser),
+      }),
+    );
+    console.warn('Match user', currentUser.name);
+  };
+
+  const fetchUser = async () => {
+    try {
+      DataStore.observeQuery(User).subscribe(({items}) => {
+        setDbUsers(items);
+      });
+    } catch (error) {
+      console.warn('get user error', error);
+    }
+  };
+
+  const getAuthUser = async () => {
+    const authUser = await Auth.currentAuthenticatedUser();
+
+    const subs = await DataStore.observeQuery(User, u =>
+      u.sub.eq(authUser.attributes.sub),
+    ).subscribe(({items}) => {
+      if (items.length > 0) {
+        setMe(items[0]);
+      }
+    });
+    return () => subs.unsubscribe();
+  };
+
+  useEffect(() => {
+    fetchUser();
+    getAuthUser();
+  }, []); // eslint-disable-line
 
   return (
     <GestureHandlerRootView style={styles.pageContainer}>
       <AnimatedStack
-        data={Users}
+        data={dbUsers}
         renderItem={({item}) => <TinderCard user={item} />}
+        setCurrentUser={setCurrentUser}
         onSwipLeft={onSwipLeft}
         onSwipRight={onSwipRight}
       />
@@ -71,7 +125,6 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.36,
     shadowRadius: 6.68,
-
     elevation: 11,
   },
 });

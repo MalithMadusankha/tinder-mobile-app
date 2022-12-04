@@ -38,6 +38,27 @@ export const schema = {
                         "targetName": "matchUser2Id"
                     }
                 },
+                "user1ID": {
+                    "name": "user1ID",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "user2ID": {
+                    "name": "user2ID",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "isMatch": {
+                    "name": "isMatch",
+                    "isArray": false,
+                    "type": "Boolean",
+                    "isRequired": true,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -140,6 +161,13 @@ export const schema = {
                     "type": {
                         "enum": "Genders"
                     },
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "sub": {
+                    "name": "sub",
+                    "isArray": false,
+                    "type": "String",
                     "isRequired": true,
                     "attributes": []
                 },
@@ -271,5 +299,5 @@ export const schema = {
     },
     "nonModels": {},
     "codegenVersion": "3.3.2",
-    "version": "86aee7ffa758a82b39a6e7538c791aa9"
+    "version": "f1336c5238a5f1186b361ebee6dcf227"
 };
